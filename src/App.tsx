@@ -2,24 +2,30 @@ import './App.css';
 import {Component} from "react";
 import {CardList} from "./components/CardList/CardList";
 import {SearchBox} from "./components/SearchBox/SearchBox";
+import {getData} from "./utils/data.utils";
 
-class App extends Component {
+export type Monster = {
+    id: string;
+    name: string;
+    email: string;
+}
 
-    constructor(props) {
-        super(props);
+type AppState = {
+    monsters: Monster[];
+    searchField: string;
+}
 
-        this.state = {
-            monsters: [],
-            searchField: ""
-        }
+class App extends Component<AppState> {
+
+    state: AppState = {
+        monsters: [],
+        searchField: ""
     }
 
     componentDidMount() {
-        fetch('https://jsonplaceholder.typicode.com/users')
-            .then(res => res.json())
+        getData<Monster[]>('https://jsonplaceholder.typicode.com/users')
             .then(users => this.setState({monsters: users}))
     }
-
     render() {
 
         const {monsters, searchField} = this.state;
@@ -30,7 +36,7 @@ class App extends Component {
                 <h1>Monsters Rolodex</h1>
                 <SearchBox
                     placeholder={"Search monsters"}
-                    handleChange={e => this.setState({searchField: e.target.value})}
+                    handleChange={(e) => this.setState({searchField: e.target.value})}
                 />
                 <CardList monsters={filteredMonsters}/>
             </div>
